@@ -1,21 +1,4 @@
-// let changeColor = document.getElementById('changeColor');
-
-// chrome.storage.sync.get('color', function(data) {
-//     changeColor.style.backgroundColor = data.color;
-//     changeColor.setAttribute('value', data.color);
-// });
-
-// changeColor.onclick = function(element) {
-//     // let color = element.target.value;
-//     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-//         chrome.tabs.executeScript(
-//             tabs[0].id,
-//             {code: 'document.body.style.backgroundColor = "' + color + '";'}
-//         );
-//     });
-// };
-// let selfTabID = chrome.tabs
-let tablePop = document.getElementById('propertyTable');
+let tablePop = document.getElementById('propTable');
 function tableCreator(properties) {
     let tableContent = "<tr><th>Prop</th><th>Value</th></tr>";
     for(key in properties) {
@@ -57,10 +40,11 @@ function getTabStub(tab, index) {
     }
     tableAppender(tablePop, tableCreator(infoHeads));
 }
-let getTabsBtn = document.getElementById('getTabs');
+// let getTabsBtn = document.getElementById('getTabs');
 let tabInfoBox = document.getElementById('tabInfo');
-getTabsBtn.onclick = function(element) {
-    alert("Clicked");
+alert("Hello ji");
+window.addEventListener("load", function() {
+    alert("DOM Ready");
     // It returns undefined because called from a non-tab context - ie a popup view
     // chrome.tabs.getCurrent(function(tab) { 
     // });
@@ -68,4 +52,4 @@ getTabsBtn.onclick = function(element) {
         tabs.forEach(getTabStub);
 
     });
-}
+});

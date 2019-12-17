@@ -8,6 +8,9 @@
         "scripts": ["background.js"],
         "persistent": false
     },
+    "chrome_url_overrides": {
+        "newtab": "tab.html"
+    },
     "options_page": "options.html",
     "browser_action": {
         "default_popup": "popup.html",
