@@ -1,3 +1,16 @@
+var thisTabID;
+
+function setCurrentTab() {
+    var thisID;
+    chrome.tabs.getCurrent(function(tab) {
+        thisID = tab.id;
+        thisTabID = tab.id;
+        // alert(tab.id);
+    })
+    // thisTabID = thisID;
+    return thisID;
+}
+
 let tablePop = document.getElementById('propTable');
 function tableCreator(properties) {
     let tableContent = "<tr><th>Prop</th><th>Value</th></tr>";
@@ -30,6 +43,7 @@ function getTabInfo(tab, index) {
     };
     return tableCreator(infoHeads);
 }
+
 function getTabStub(tab, index) {
     let infoHeads = {
         "ID": tab.id, 
@@ -38,16 +52,24 @@ function getTabStub(tab, index) {
         "Title": tab.title, 
         "FaviconURL": tab.favIconUrl
     }
-    tableAppender(tablePop, tableCreator(infoHeads));
+    if(tab.id != thisTabID) {
+        tableAppender(tablePop, tableCreator(infoHeads));
+    } else {
+        alert("Tabs match");
+    }
+
 }
-// let getTabsBtn = document.getElementById('getTabs');
+let saveTabsBtn = document.getElementById('saveBtn');
 let tabInfoBox = document.getElementById('tabInfo');
-alert("Hello ji");
+let savedTable = document.getElementById('savedTabsTable');
+
+saveTabsBtn.addEventListener("click", function() {
+
+});
+
 window.addEventListener("load", function() {
-    alert("DOM Ready");
-    // It returns undefined because called from a non-tab context - ie a popup view
-    // chrome.tabs.getCurrent(function(tab) { 
-    // });
+    setCurrentTab();
+    alert("Current ID: " + thisTabID);
     chrome.tabs.query({currentWindow: true}, function(tabs) {
         tabs.forEach(getTabStub);
 
