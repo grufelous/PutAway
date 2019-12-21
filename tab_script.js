@@ -12,7 +12,13 @@ function setCurrentTab() {
 }
 
 let tablePop = document.getElementById('propTable');
-function tableCreator(properties) {
+let savedTable = document.getElementById('savedTabsTable');
+
+var tableCounter = 0;
+function tableCreator() {
+
+}
+function fillTabRow(properties) {
     let tableContent = "<tr><th>Prop</th><th>Value</th></tr>";
     for(key in properties) {
         let newRow = "<tr>";
@@ -41,9 +47,10 @@ function getTabInfo(tab, index) {
         "Title": tab.title, 
         "FaviconURL": tab.favIconUrl
     };
-    return tableCreator(infoHeads);
+    return fillTabRow(infoHeads);
 }
 let currentTabs = [];
+// put it into tab creation - compress each new tab to currentTabs
 function tabCompressor(tab) {
     let newTab = {
         "id": tab.id, 
@@ -67,16 +74,20 @@ function getTabStub(tab, index) {
     }
     if(tab.id != thisTabID) {
         tabCompressor(tab);
-        tableAppender(tablePop, tableCreator(infoHeads));
+        tableAppender(tablePop, fillTabRow(infoHeads));
         console.log(currentTabs);
     }
 }
 let saveTabsBtn = document.getElementById('saveBtn');
 let tabInfoBox = document.getElementById('tabInfo');
-let savedTable = document.getElementById('savedTabsTable');
 
 saveTabsBtn.addEventListener("click", function() {
-
+    for(var i = 0; i < currentTabs.length; i++) {
+        
+        tableAppender(savedTable, fillTabRow(currentTabs[i]));
+        chrome.tabs.remove(currentTabs[i]["id"]);
+    }
+    alert("Saved");
 });
 
 window.addEventListener("load", function() {
