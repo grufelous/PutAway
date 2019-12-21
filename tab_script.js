@@ -43,7 +43,20 @@ function getTabInfo(tab, index) {
     };
     return tableCreator(infoHeads);
 }
-
+let currentTabs = [];
+function tabCompressor(tab) {
+    let newTab = {
+        "id": tab.id, 
+        "index": tab.index, 
+        "url": tab.url, 
+        "title": tab.title, 
+        "favurl": tab.favIconUrl
+    }
+    currentTabs.push(newTab);
+}
+function tabInflator(tabInfo) {
+    chrome.tabs.create({url: tabInfo["url"], index: tabInfo["index"], active: false});
+}
 function getTabStub(tab, index) {
     let infoHeads = {
         "ID": tab.id, 
@@ -53,11 +66,10 @@ function getTabStub(tab, index) {
         "FaviconURL": tab.favIconUrl
     }
     if(tab.id != thisTabID) {
+        tabCompressor(tab);
         tableAppender(tablePop, tableCreator(infoHeads));
-    } else {
-        alert("Tabs match");
+        console.log(currentTabs);
     }
-
 }
 let saveTabsBtn = document.getElementById('saveBtn');
 let tabInfoBox = document.getElementById('tabInfo');
