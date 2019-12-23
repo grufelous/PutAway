@@ -27,10 +27,15 @@ function fillTabRow(properties) {
         newRow += "</tr>";
         tableContent += newRow;
     }
-    return tableContent;
+    // @TODO: This violates CSP directives. Better to first populate the table, then inject the tab-closing action into them
+    // var closer = "<tr><td><span class=\"closeBtn\" onclick=\"alert(\"Del\")\">X</span></td></tr>";
+    return tableContent+closer;
 }
-function tableAppender(table, htmlContent) {
-    table.innerHTML += htmlContent;
+function tableAppender(tableID, htmlContent) {
+    tableID.innerHTML += htmlContent;
+}
+function clearTable(tableID) {
+    tableID.innerHTML = null;
 }
 function getTabInfo(tab, index) {
 //     tab.id, tab.index, tab.windowId, tab.highlighted, tab.pinned, tab.active, tab.url, 
@@ -78,23 +83,26 @@ function getTabStub(tab, index) {
         console.log(currentTabs);
     }
 }
+function populateCurrentTabsTable() {
+    chrome.tabs.query({currentWindow: true}, function(tabs) {
+        tabs.forEach(getTabStub);
+    });
+}
 let saveTabsBtn = document.getElementById('saveBtn');
 let tabInfoBox = document.getElementById('tabInfo');
 
 saveTabsBtn.addEventListener("click", function() {
-    for(var i = 0; i < currentTabs.length; i++) {
-        
+    for(var i = 0; i < currentTabs.length; i++) {      
         tableAppender(savedTable, fillTabRow(currentTabs[i]));
         chrome.tabs.remove(currentTabs[i]["id"]);
     }
-    alert("Saved");
+    console.log("Saved");
+    clearTable(tablePop);
+    populateCurrentTabsTable();
 });
 
 window.addEventListener("load", function() {
     setCurrentTab();
-    alert("Current ID: " + thisTabID);
-    chrome.tabs.query({currentWindow: true}, function(tabs) {
-        tabs.forEach(getTabStub);
-
-    });
+    console.log("Current ID: " + thisTabID);
+    populateCurrentTabsTable();
 });
