@@ -8,3 +8,6 @@ function getTabInfo(tab) {
     };
     return tabProps;
 }
+chrome.tabs.onCreated.addListener(function(tab) {
+
+});
