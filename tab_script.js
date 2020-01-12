@@ -5,12 +5,11 @@ function setCurrentTab() {
     chrome.tabs.getCurrent(function(tab) {
         thisID = tab.id;
         thisTabID = tab.id;
-        // alert(tab.id);
     })
-    // thisTabID = thisID;
     return thisID;
 }
 
+// tables
 let tablePop = document.getElementById('propTable');
 let savedTable = document.getElementById('savedTabsTable');
 
@@ -29,7 +28,7 @@ function fillTabRow(properties) {
     }
     // @TODO: This violates CSP directives. Better to first populate the table, then inject the tab-closing action into them
     // var closer = "<tr><td><span class=\"closeBtn\" onclick=\"alert(\"Del\")\">X</span></td></tr>";
-    return tableContent+closer;
+    return tableContent;
 }
 function tableAppender(tableID, htmlContent) {
     tableID.innerHTML += htmlContent;
@@ -105,4 +104,12 @@ window.addEventListener("load", function() {
     setCurrentTab();
     console.log("Current ID: " + thisTabID);
     populateCurrentTabsTable();
+    chrome.tabs.onCreated.addListener(function(tab) {
+        alert("New tab: " + tab.index);
+        console.log("New tab: " + tab.id);
+    });
+    chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+        alert("Tab update: " + tab.index + ", " + tab.title);
+        console.log("Tab update: " + tab.index + ", " + tab.title);
+    });
 });
