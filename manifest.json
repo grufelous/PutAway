@@ -9,7 +9,7 @@
         "persistent": false
     },
     "chrome_url_overrides": {
-        "newtab": "tab.html"
+        "newtab": "tab2.html"
     },
     "options_page": "options.html",
     "browser_action": {
