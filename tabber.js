@@ -1,5 +1,7 @@
 /**
- * function that returns basic JSON info from a given tab - serializes Chrome tab objects
+ * Function that returns basic JSON info from a given tab - serializes Chrome tab objects
+ * @param {Object} tab  A Chrome tab
+ * @return {JSON}       Select tab properties
  */
 function getTabInfo(tab) {
     let tabProps = {
@@ -13,7 +15,9 @@ function getTabInfo(tab) {
 }
 
 /**
- * function that returns an HTML object by populating tab fields from a serialized tab given in JSON
+ * Function that returns an HTML object by populating tab fields from a serialized tab given in JSON
+ * @param {JSON} tab_info   The information for a tab in JSON format
+ * @return {string}         The formatted string to output HTML of the tab
  */ 
 function tileInflator(tab_info) {
     var tileEmpty = `<div class="tabTile">
@@ -23,16 +27,36 @@ function tileInflator(tab_info) {
     return tileEmpty;
 }
 
+// reference to the HTML panel containing the currently opened tabs
 var currentTabsPanel = document.getElementById('currentTabsPanel');
+// list of current tabs - serialized
+var currentTabList = [];
 /**
- * function that appends an inflated tab into a tab panel
+ * Function that appends an inflated tab into a tab panel
+ * @param {string} tab_tile             The HTML representation of tab serialized
+ * @param {object} destination_panel    The object to which to add this tab
  */
 function appendToPanel(tab_tile, destination_panel) {
     destination_panel.innerHTML += tab_tile;
 }
+/**
+ * Function to search for a tab given its tab index
+ * @param {integer} tab_id  Index of tab to look for
+ * @return {integer}        Index in the array
+ */
+function searchForTab(tab_id) {
+    for(var i = 0; i < currentTabList.length; i++) {
+        if(currentTabList[i]["id"] == tab_id)
+            return i;
+    }
+    return -1;
+}
 chrome.tabs.onCreated.addListener(function(tab) {
     console.log("Create: ");
-    console.log(getTabInfo(tab));
+    let createdTabInfo = getTabInfo(tab);
+    console.log(createdTabInfo);
+    currentTabList.push(createdTabInfo);
+    console.log(currentTabList);
 });
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if(changeInfo["status"]=="complete") {
@@ -45,3 +69,12 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         appendToPanel(tabHTML, currentTabsPanel);
     }
 });
+
+/**
+ * Debug message that alerts
+ */
+function helloWorld() {
+    alert("Hello World");
+}
+manualTriggerBtn = document.getElementById("manualTrigger");
+manualTriggerBtn.addEventListener("click", helloWorld);

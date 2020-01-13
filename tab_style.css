@@ -33,8 +33,8 @@ h1 {
 }
 
 .tabTile > img {
-    width: 128px;
-    height: 128px;
+    width: 64px;
+    height: 64px;
 }
 
 .tabTile > p {
