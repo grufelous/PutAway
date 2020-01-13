@@ -23,7 +23,8 @@ function tileInflator(tab_info) {
     var tileEmpty = `<div class="tabTile">
     <h2>${tab_info.title}</h2>
     <img src="${tab_info.favUrl}" alt="">
-    <p>${tab_info.url}</p></div>`;
+    <p>${tab_info.url}</p>
+    <p>${tab_info.id}</div>`;
     return tileEmpty;
 }
 
@@ -51,6 +52,26 @@ function searchForTab(tab_id) {
     }
     return -1;
 }
+/**
+ * Function to update tab tile
+ * @param {object}  tab     A Chrome tab object
+ */
+function updateTile(tab) {
+    let tab_idx = searchForTab(tab["id"]);
+    if(tab_idx == -1) {
+        console.log("No such tab exists");
+        return;
+    }
+    let currentTabTiles = document.querySelectorAll("#currentTabsPanel > .tabTile");
+    currentTabTiles.forEach(function(tile) {
+        /**
+         * @TODO
+         * Update the inner HTML. How? Create own custom HTML attribute to keep ID separate? Traverse the tile for the tab ID and then update it all?
+         */
+        // if(tile)
+    });
+    console.log(currentTabTiles);
+}
 chrome.tabs.onCreated.addListener(function(tab) {
     console.log("Create: ");
     let createdTabInfo = getTabInfo(tab);
@@ -60,13 +81,13 @@ chrome.tabs.onCreated.addListener(function(tab) {
 });
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if(changeInfo["status"]=="complete") {
-        console.log("Update: ");
-        console.log("update type: ");
+        console.log("Update completed: ");
         console.log(changeInfo);
         let updatedTabInfo = getTabInfo(tab);
         let tabHTML = tileInflator(updatedTabInfo);
         console.log(tabHTML);
         appendToPanel(tabHTML, currentTabsPanel);
+        updateTile(tab);
     }
 });
 
