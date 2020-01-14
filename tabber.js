@@ -30,10 +30,13 @@ function tileInflator(tab_info) {
 
 /**
  * Function that validates tabs to prevent addition of invalid and unnecessary tabs 
- * @param {JSON} tab_info Validates tab from its JSON representation for addition to arrays and lists
+ * @param {Object} tab Validates tab from its Chrome tab object representation for addition to arrays and lists
  */
-function isTabValid(tab_info) {
-    if(tab_info["url"]=="chrome://newtab") {
+function isTabValid(tab) {
+    if(tab["status"]=="loading") {
+        return false;
+    }
+    if(tab["url"]=="chrome://newtab/" || tab["url"]=="chrome://newtab") {
         return false;
     }
     return true;
