@@ -91,7 +91,7 @@ function populateCurrentTabList() {
             }
         });
     });
-    console.log("Populated currentTabList", currentTabList);
+    console.log("Populated currentTabList: ", currentTabList);
 }
 /**
  * Function to search for a tab given its tab index
@@ -131,11 +131,18 @@ function updateTile(tab) {
 // Creation, updation, (deletion, removal) after that - have listeners
 // Can save to local
 function tabTileInit() {
+    console.log(currentTabList);
+    alert("Check");
     populateCurrentTabList();
+    alert("Check");
+    console.log(currentTabList);
+    alert("Check");
     // sleep(1000);
     /**
      * @TODO
-     * Does not work right after population. Need to wait for populate query to finish?
+     * Does not work right after population. Need to wait for populate query to finish its job - look for ?
+     * Merge populateCurrentTabList here for easiest way out - use callback to construct HTML divs and populate table simultaneously
+     * 
      */
     currentTabList.forEach(function(tab_info) {
         console.log("Adding to panel: ");
@@ -155,11 +162,11 @@ chrome.tabs.onCreated.addListener(function(tab) {
 });
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if(changeInfo["status"]=="complete") {
-        console.log("Update completed: ");
-        console.log(changeInfo);
+        // console.log("Update completed: ");
+        // console.log(changeInfo);
         let updatedTabInfo = getTabInfo(tab);
         let tabHTML = tileInflator(updatedTabInfo);
-        console.log(tabHTML);
+        // console.log(tabHTML);
         appendToPanel(tabHTML, currentTabsPanel);
         updateTile(tab);
     }
