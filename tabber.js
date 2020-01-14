@@ -1,3 +1,23 @@
+// Extra functions for debugging
+/**
+ * Function to sleep
+ * @param {int} milliseconds 
+ */
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+      if ((new Date().getTime() - start) > milliseconds){
+        break;
+      }
+    }
+}
+/**
+ * Debug message that alerts
+ */
+function helloWorld() {
+    alert("Hello World");
+}
+
 /**
  * Function that returns basic JSON info from a given tab - serializes Chrome tab objects
  * @param {Object} tab  A Chrome tab
@@ -48,7 +68,7 @@ var currentTabList = [];
 
 /**
  * Function that appends an inflated tab into a tab panel
- * @param {string} tab_tile             The HTML representation of tab serialized
+ * @param {string} tab_tile             The HTML representation of tab serialized from tileInflator
  * @param {object} destination_panel    The object to which to add this tab
  */
 function appendToPanel(tab_tile, destination_panel) {
@@ -66,11 +86,12 @@ function populateCurrentTabList() {
     let tabList = chrome.tabs.query(queryInfo, function(tabArray) {
         tabArray.forEach(function(tab) {
             if(tab["url"] != 'chrome://newtab/') {
-                console.log(tab["url"]);
+                console.log("Adding to array: ", tab["url"]);
                 currentTabList.push(getTabInfo(tab));
             }
         });
     });
+    console.log("Populated currentTabList", currentTabList);
 }
 /**
  * Function to search for a tab given its tab index
@@ -105,9 +126,26 @@ function updateTile(tab) {
     console.log(currentTabTiles);
 }
 
-
-
-
+// New tab created - fetch all tiles through query. Save them to list.
+// Use list to create tiles
+// Creation, updation, (deletion, removal) after that - have listeners
+// Can save to local
+function tabTileInit() {
+    populateCurrentTabList();
+    // sleep(1000);
+    /**
+     * @TODO
+     * Does not work right after population. Need to wait for populate query to finish?
+     */
+    currentTabList.forEach(function(tab_info) {
+        console.log("Adding to panel: ");
+        console.log(tab_info);
+        // let tile = tileInflator(tab_info);
+        // console.log(tile);
+        // appendToPanel(tile, currentTabsPanel);
+    });
+    alert("Added 'em all")
+}
 chrome.tabs.onCreated.addListener(function(tab) {
     console.log("Create: ");
     let createdTabInfo = getTabInfo(tab);
@@ -127,16 +165,5 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     }
 });
 
-/**
- * Debug message that alerts
- */
-function helloWorld() {
-    alert("Hello World");
-}
 manualTriggerBtn = document.getElementById("manualTrigger");
-manualTriggerBtn.addEventListener("click", populateCurrentTabList);
-
-// New tab created - fetch all tiles through query. Save them to list.
-// Use list to create tiles
-// Creation, updation, (deletion, removal) after that - have listeners
-// Can save to local
+manualTriggerBtn.addEventListener("click", tabTileInit);
