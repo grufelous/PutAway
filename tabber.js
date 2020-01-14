@@ -28,10 +28,21 @@ function tileInflator(tab_info) {
     return tileEmpty;
 }
 
+/**
+ * Function that validates tabs to prevent addition of invalid and unnecessary tabs 
+ * @param {JSON} tab_info Validates tab from its JSON representation for addition to arrays and lists
+ */
+function isTabValid(tab_info) {
+    if(tab_info["url"]=="chrome://newtab") {
+        return false;
+    }
+    return true;
+}
 // reference to the HTML panel containing the currently opened tabs
 var currentTabsPanel = document.getElementById('currentTabsPanel');
 // list of current tabs - serialized
 var currentTabList = [];
+
 /**
  * Function that appends an inflated tab into a tab panel
  * @param {string} tab_tile             The HTML representation of tab serialized
@@ -39,6 +50,24 @@ var currentTabList = [];
  */
 function appendToPanel(tab_tile, destination_panel) {
     destination_panel.innerHTML += tab_tile;
+}
+
+/**
+ * Populate the tab list on first launch
+ * Manually fetch the tabs or @TODO pick the stored current tabs - see performance 
+ */
+function populateCurrentTabList() {
+    let queryInfo = {
+        currentWindow: true,
+    };
+    let tabList = chrome.tabs.query(queryInfo, function(tabArray) {
+        tabArray.forEach(function(tab) {
+            if(tab["url"] != 'chrome://newtab/') {
+                console.log(tab["url"]);
+                currentTabList.push(getTabInfo(tab));
+            }
+        });
+    });
 }
 /**
  * Function to search for a tab given its tab index
@@ -72,6 +101,10 @@ function updateTile(tab) {
     });
     console.log(currentTabTiles);
 }
+
+
+
+
 chrome.tabs.onCreated.addListener(function(tab) {
     console.log("Create: ");
     let createdTabInfo = getTabInfo(tab);
@@ -98,4 +131,9 @@ function helloWorld() {
     alert("Hello World");
 }
 manualTriggerBtn = document.getElementById("manualTrigger");
-manualTriggerBtn.addEventListener("click", helloWorld);
+manualTriggerBtn.addEventListener("click", populateCurrentTabList);
+
+// New tab created - fetch all tiles through query. Save them to list.
+// Use list to create tiles
+// Creation, updation, (deletion, removal) after that - have listeners
+// Can save to local
