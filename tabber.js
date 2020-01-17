@@ -87,7 +87,13 @@ function populateCurrentTabList() {
         tabArray.forEach(function(tab) {
             if(tab["url"] != 'chrome://newtab/') {
                 console.log("Adding to array: ", tab["url"]);
-                currentTabList.push(getTabInfo(tab));
+                let thisTabInfo = getTabInfo(tab);
+                currentTabList.push(thisTabInfo);
+                console.log("Adding to panel: ");
+                console.log(thisTabInfo);
+                let tile = tileInflator(thisTabInfo);
+                console.log(tile);
+                appendToPanel(tile, currentTabsPanel);
             }
         });
     });
@@ -132,37 +138,21 @@ function updateTile(tab) {
 // Can save to local
 function tabTileInit() {
     console.log(currentTabList);
-    alert("Check");
     populateCurrentTabList();
-    alert("Check");
     console.log(currentTabList);
-    alert("Check");
-    // sleep(1000);
-    /**
-     * @TODO
-     * Does not work right after population. Need to wait for populate query to finish its job - look for ?
-     * Merge populateCurrentTabList here for easiest way out - use callback to construct HTML divs and populate table simultaneously
-     * 
-     */
-    currentTabList.forEach(function(tab_info) {
-        console.log("Adding to panel: ");
-        console.log(tab_info);
-        // let tile = tileInflator(tab_info);
-        // console.log(tile);
-        // appendToPanel(tile, currentTabsPanel);
-    });
     alert("Added 'em all")
 }
-chrome.tabs.onCreated.addListener(function(tab) {
-    console.log("Create: ");
-    let createdTabInfo = getTabInfo(tab);
-    console.log(createdTabInfo);
-    currentTabList.push(createdTabInfo);
-    console.log(currentTabList);
-});
+// chrome.tabs.onCreated.addListener(function(tab) {
+//     console.log("Create: ");
+//     let createdTabInfo = getTabInfo(tab);
+//     console.log(createdTabInfo);
+//     currentTabList.push(createdTabInfo);
+//     console.log(currentTabList);
+// });
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    console.log("Called onUpdate");
     if(changeInfo["status"]=="complete") {
-        // console.log("Update completed: ");
+        console.log("Update completed: ");
         // console.log(changeInfo);
         let updatedTabInfo = getTabInfo(tab);
         let tabHTML = tileInflator(updatedTabInfo);
